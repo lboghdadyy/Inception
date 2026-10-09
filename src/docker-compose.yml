@@ -1,0 +1,16 @@
+services:
+  mariadb :
+
+  wordpress :
+  nginx :
+
+volumes:
+
+networks:
+  inception :
+    
+secrets:
+  mySqlPassword:
+    secrets/mySqlPassword.txt
+  mySqlRootPassword:
+    secrets/mySqlRootPassword.txt
