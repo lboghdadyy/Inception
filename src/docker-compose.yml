@@ -1,14 +1,18 @@
 services:
   mariadb :
-
+    secrets :
+      mySqlPassword
+      mySqlRootPassword
   wordpress :
   nginx :
+    image : nginx
+    port : 443
 
 volumes:
 
 networks:
   inception :
-    
+    dirver : bridge    
 secrets:
   mySqlPassword:
     secrets/mySqlPassword.txt
