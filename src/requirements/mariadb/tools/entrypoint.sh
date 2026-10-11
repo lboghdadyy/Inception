@@ -25,6 +25,8 @@ USERNAME="${MYSQL_USER:?MYSQL_USER is not set}"
 
 MYSQLFILE="/var/lib/mysql"
 
+mkdir -p /run/mysqld
+chown mysql:mysql /run/mysqld
 if [[ ! -d "$FILE" ]]; then
     mariadb-install-db \
         --user=mysql \

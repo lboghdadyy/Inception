@@ -8,6 +8,11 @@ WORKDIR /etc/mysql
 
 COPY conf/mariadb.cnf .
 
-COPY tools/entrypoint.sh .
+COPY tools/entrypoint.sh /usr/local/bin/entrypoint.sh
 
-ENTRYPOINT [ "entrypoint.sh" ]
+RUN chmod +x /usr/local/bin/entrypoint.sh
+
+RUN mkdir -p /run/mysqld \
+    && chown mysql:mysql /run/mysqld
+
+ENTRYPOINT [ "/usr/local/bin/entrypoint.sh" ]
