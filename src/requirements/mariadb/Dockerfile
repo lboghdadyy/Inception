@@ -1,4 +1,4 @@
-FROM debian:13
+FROM debian:12
 
 RUN apt update && apt upgrade -y
 
@@ -11,5 +11,3 @@ COPY conf/mariadb.cnf .
 COPY tools/entrypoint.sh .
 
 ENTRYPOINT [ "entrypoint.sh" ]
-
-CMD ["mariadb"]
