@@ -8,6 +8,7 @@ services:
       - mySqlRootPassword
     volumes :
       - mariadb-db:/var/lib/mysql
+    env_file : .env
   wordpress :
     build : ./requirements/wordpress
     networks :
@@ -17,6 +18,7 @@ services:
       - mySqlPassword
     volumes :
       - wordpress-data:/var/www/html
+    env_file : .env
   nginx :
     build : ./requirements/nginx
     networks :

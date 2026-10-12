@@ -15,7 +15,10 @@ RUN openssl req -x509 -nodes -days 365 \
     -out certificate/inception_certif.crt \
     -subj "/C=MA/ST=BeniMellal-Khenifra/L=Khouribga/O=42/CN=sbaghdad.42.fr"
 
-COPY conf/nginx.conf /etc/nginx/nginx.conf
+
+COPY conf/nginx.conf /tmp/nginx.conf
+
+RUN rm -rf /etc/nginx/nginx.conf && cp -rf /tmp/nginx.conf .
 
 EXPOSE 443
 
