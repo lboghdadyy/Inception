@@ -1,22 +1,40 @@
 services:
   mariadb :
-    build : ./requirement/mariadb
+    build : ./requirements/mariadb
+    networks :
+      - mariadb-wordpress
     secrets :
-      mySqlPassword
-      mySqlRootPassword
+      - mySqlPassword
+      - mySqlRootPassword
+    volumes :
+      - mariadb-db:/var/lib/mysql
   wordpress :
-    build : ./requirement/wordpress
+    build : ./requirements/wordpress
+    networks :
+      - mariadb-wordpress
+      - wordpress-nginx
+    secrets :
+      - mySqlPassword
+    volumes :
+      - wordpress-data:/var/www/html
   nginx :
-    build : ./requirement/nginx
-    port : 443
-
-volumes:
-
+    build : ./requirements/nginx
+    networks :
+      - wordpress-nginx
+    volumes :
+      - wordpress-data:/var/www/html
+    ports : 
+      - "443:443"
 networks:
-  inception :
-    dirver : bridge
+  mariadb-wordpress :
+    driver : bridge
+  wordpress-nginx :
+    driver : bridge
 secrets:
   mySqlPassword:
-    secrets/mySqlPassword.txt
+    file : ./secrets/mySqlPassword.txt
   mySqlRootPassword:
-    secrets/mySqlRootPassword.txt
+    file : ./secrets/mySqlRootPassword.txt
+volumes:
+  wordpress-data :
+  mariadb-db :
