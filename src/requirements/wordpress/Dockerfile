@@ -22,11 +22,11 @@ RUN curl --fail --location \
     && cp -a /tmp/wordpress/. /var/www/html/ \
     && rm -rf /tmp/wordpress /tmp/wordpress.tar.gz
 
-COPY conf/www.conf /tmp/www.conf
+COPY conf/www.conf /etc/php/8.2/fpm/php-fpm.conf
 
-RUN PHP_VERSION=$(php -r 'echo PHP_MAJOR_VERSION.".".PHP_MINOR_VERSION;') \
-    && cp /tmp/www.conf "/etc/php/$PHP_VERSION/fpm/pool.d/www.conf" \
-    && rm /tmp/www.conf
+# RUN PHP_VERSION=$(php -r 'echo PHP_MAJOR_VERSION.".".PHP_MINOR_VERSION;') \
+#     && cp /tmp/www.conf "/etc/php/$PHP_VERSION/fpm/pool.d/www.conf" \
+#     && rm /tmp/www.conf
 
 COPY tools/entrypoint.sh /usr/local/bin/entrypoint.sh
 
