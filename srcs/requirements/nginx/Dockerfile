@@ -1,4 +1,4 @@
-FROM debian:12
+FROM debian:bookworm
 
 RUN apt-get update && apt-get install -y \
     nginx \
@@ -17,10 +17,6 @@ RUN openssl req -x509 -nodes -days 365 \
 
 COPY conf/nginx.conf /etc/nginx/nginx.conf
 
-EXPOSE 443
+ENTRYPOINT [ "nginx" ]
 
-COPY ./tools/entrypoint.sh /usr/local/bin/entrypoint.sh
-
-RUN chmod +x /usr/local/bin/entrypoint.sh
-
-CMD [ "/usr/local/bin/entrypoint.sh" ]
+CMD [ "-g", "daemon off;" ]

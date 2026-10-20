@@ -1,0 +1,82 @@
+services:
+  mariadb :
+    build : ./requirements/mariadb
+    image : mariadb:lboghdady
+    container_name : mariadb
+    networks :
+      - inception_network
+    secrets :
+      - mySqlPassword
+      - mySqlRootPassword
+    volumes :
+      - mariadb-data:/var/lib/mysql
+    env_file : .env
+    healthcheck:
+      test: ["CMD-SHELL", "mariadb -u \"$MYSQL_USER\" -p\"$(cat /run/secrets/mySqlPassword)\" \"$MYSQL_DATABASE\" -e 'SELECT 1'"]
+      interval : 10s
+      timeout : 5s
+      retries : 1
+      start_period: 30s
+    restart : on-failure
+  wordpress :
+    build : ./requirements/wordpress
+    image : wordpress:lboghdady
+    container_name : wordpress
+    networks :
+      - inception_network
+    secrets :
+      - mySqlPassword
+      - wp-AdminPassword
+      - wp-UserPassword
+    volumes :
+      - wordpress-data:/var/www/html
+    env_file : .env
+    depends_on :
+      mariadb :
+        condition : service_healthy
+    healthcheck:
+      test: ["CMD-SHELL", "php-fpm$(php -r 'echo PHP_MAJOR_VERSION.\".\".PHP_MINOR_VERSION;') -t"]
+      interval: 10s
+      timeout: 5s
+      retries: 1
+      start_period: 30s
+    restart : on-failure
+  nginx :
+    build : ./requirements/nginx
+    image : nginx:lboghdady
+    container_name : nginx
+    networks :
+      - inception_network
+    volumes :
+      - wordpress-data:/var/www/html
+    ports : 
+      - "443:443"
+    depends_on :
+      wordpress :
+        condition : service_healthy
+    restart : on-failure
+networks:
+  inception_network :
+    driver : bridge
+secrets:
+  mySqlPassword:
+    file : ../secrets/mySqlPassword.txt
+  mySqlRootPassword:
+    file : ../secrets/mySqlRootPassword.txt
+  wp-AdminPassword :
+    file : ../secrets/wp-AdminPassword.txt
+  wp-UserPassword :
+    file : ../secrets/wp-UserPassword.txt
+volumes:
+  wordpress-data :
+    driver : local
+    driver_opts :
+      o : bind
+      type : none
+      device : /home/${USER}/data/wordpress
+  mariadb-data :
+    driver : local
+    driver_opts :
+      o : bind
+      type : none
+      device : /home/${USER}/data/mariadb
